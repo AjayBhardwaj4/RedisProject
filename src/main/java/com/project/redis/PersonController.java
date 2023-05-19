@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,30 +52,28 @@ public class PersonController {
      *   Key: String
      *   Value: List<Object>
      **/
+/*
     @PostMapping("/lpush/person")
     public void lpush(@RequestBody Person person) {
-        redisTemplate.opsForList().leftPush(PERSON_LIST_KEY, person);
+        redisTemplate.opsForList().leftPushAll(PERSON_LIST_KEY, person);
     }
 
     @PostMapping("/rpush/person")
     public void rpush(@RequestBody Person person) {
         redisTemplate.opsForList().rightPush(PERSON_LIST_KEY, person);
     }
-
-    /* Not working
-
+*/
     @PostMapping("/lpush/person")
-    public void lpush(@RequestBody String person) throws Exception {
-        List<Person> personList = mapper.readValue(person, new TypeReference<List<Person>>() {});
-        redisTemplate.opsForList().leftPushAll(PERSON_LIST_KEY, personList);
+    public void lpush(@RequestBody List<Person> people) throws Exception {
+        List<Object> objects = Arrays.asList(people.toArray());
+        redisTemplate.opsForList().leftPushAll(PERSON_LIST_KEY, objects);
     }
 
     @PostMapping("/rpush/person")
-    public void rpush(@RequestBody String person) throws Exception {
-        List<Person> personList = mapper.readValue(person, new TypeReference<List<Person>>() {});
-        redisTemplate.opsForList().rightPushAll(PERSON_LIST_KEY, personList);
+    public void rpush(@RequestBody List<Person> people) throws Exception {
+        List<Object> objects = Arrays.asList(people.toArray());
+        redisTemplate.opsForList().rightPushAll(PERSON_LIST_KEY, objects);
     }
-*/
     @DeleteMapping("/lpop/person")
     public List<Person> lpop(@RequestParam(value = "count", required = false, defaultValue = "1") int count) {
         return redisTemplate.opsForList().leftPop(PERSON_LIST_KEY, count)
